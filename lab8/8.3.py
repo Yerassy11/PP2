@@ -3,58 +3,56 @@
 import pygame
 
 pygame.init()  # инициализация Pygame.
-
-WIDTH, HEIGHT = 800, 600  # параметры экрана
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  # построение экрана
-pygame.display.set_caption("Simple Paint in Pygame")  # название.
-
-# цвета
+    
+WIDTH, HEIGHT = 600, 400 #параметры экрана
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Paint Program")
+#цвета
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-
-# цвет по дефолту
-current_color = BLACK
-
-# заполнение фона белым цветом.
+#фон
 screen.fill(WHITE)
+drawing = False
+color = BLACK
+mode = "circle" #фигура по дефолту  
+clock = pygame.time.Clock()
 
 running = True
-shape = "circle"
 
+#основная логика
 while running:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # закрытие игры
+        if event.type == pygame.QUIT:
             running = False
-
-        elif event.type == pygame.KEYDOWN:  # Значение принимаемые с клавиатуры
-            if event.key == pygame.K_r:  # Если нажата R то рисуем квадрат
-                shape = "rect"
-            elif event.key == pygame.K_c:  #  Если нажата С то рисуем круг
-                shape = "circle"
-            elif event.key == pygame.K_e: #Если Е то ластик
-                shape = "eraser"
-
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+                drawing = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            drawing = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                mode = "rectangle"
+            elif event.key == pygame.K_c:
+                mode = "circle"
+            elif event.key == pygame.K_e:
+                color = WHITE  # Eraser mode
             elif event.key == pygame.K_1:
-                current_color = BLACK
+                color = BLACK  # Black color
             elif event.key == pygame.K_2:
-                current_color = RED
+                color = RED  # Red color
             elif event.key == pygame.K_3:
-                current_color = BLUE
-            elif event.key == pygame.K_4:
-                current_color = GREEN
+                color = BLUE  # Blue color
+        #изменения при нажатий клавиш
+        if drawing:
+            x, y = pygame.mouse.get_pos() #координаты мышки
+            if mode == "circle":
+                pygame.draw.circle(screen, color, (x, y), 10)
+            elif mode == "rectangle":
+                pygame.draw.rect(screen, color, (x, y, 20, 20))
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:  # Если нажата мышка
-            x, y = event.pos  # координаты мышки
-            if shape == "circle":  # Если фигура это круг
-                pygame.draw.circle(screen, current_color, (x, y), 20)
-            elif shape == "rect":  # Если фигура это - четырехугольник болса
-                pygame.draw.rect(screen, current_color, (x, y, 40, 40))
-            elif shape == "eraser":  # Если включен ластик
-                pygame.draw.circle(screen, WHITE, (x, y), 20)
+        pygame.display.flip()
+        clock.tick(60)
 
-    pygame.display.update()  # обновление экрана
 
 pygame.quit()  #Закрытие Pygame.
